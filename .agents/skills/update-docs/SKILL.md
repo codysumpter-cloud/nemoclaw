@@ -1,6 +1,16 @@
 ---
 name: update-docs
 description: Scan recent git commits for changes that affect user-facing behavior, then draft or update the corresponding documentation pages. Use when docs have fallen behind code changes, after a batch of features lands, or when preparing a release. Trigger keywords - update docs, draft docs, docs from commits, sync docs, catch up docs, doc debt, docs behind, docs drift.
+triggers:
+  - update docs
+  - draft docs
+  - docs from commits
+  - sync docs
+  - catch up docs
+  - doc debt
+  - docs behind
+  - docs drift
+  - documentation update
 ---
 
 # Update Docs from Commits
@@ -83,22 +93,13 @@ Identify where the new content should go. Follow the page's existing structure.
 
 ## Step 5: Draft the Update
 
-Write the doc update following these conventions:
+Follow the style guide in `docs/CONTRIBUTING.md`. Key points:
 
-- **Active voice, present tense, second person.**
-- **No unnecessary bold.** Reserve bold for UI labels and parameter names.
-- **No em dashes** unless used sparingly. Prefer commas or separate sentences.
-- **Start sections with an introductory sentence** that orients the reader.
-- **No superlatives.** Say what the feature does, not how great it is.
-- **Code examples use `console` language** with `$` prompt prefix.
-- **Include the SPDX header** if creating a new page.
-- **Match existing frontmatter format** if creating a new page.
-- **Always write NVIDIA in all caps.** Wrong: Nvidia, nvidia.
-- **Always capitalize NemoClaw correctly.** Wrong: nemoclaw (in prose), Nemoclaw.
-- **Always capitalize OpenShell correctly.** Wrong: openshell (in prose), Openshell, openShell.
-- **Do not number section titles.** Wrong: "Section 1: Configure Inference" or "Step 3: Verify." Use plain descriptive titles.
-- **No colons in titles.** Wrong: "Inference: Cloud and Local." Write "Cloud and Local Inference" instead.
-- **Use colons only to introduce a list.** Do not use colons as general-purpose punctuation between clauses.
+- Active voice, present tense, second person.
+- No superlatives, hedge words, or unnecessary bold.
+- `console` code blocks with `$` prefix for CLI examples.
+- MyST admonitions (`:::{note}`, `:::{warning}`) for callouts, not bold text.
+- See the word list in `docs/CONTRIBUTING.md` for correct capitalization (NVIDIA, NemoClaw, OpenShell, OpenClaw, etc.).
 
 When updating an existing page:
 
@@ -132,17 +133,34 @@ After drafting all updates, present a summary to the user:
 
 ## Step 7: Build and Verify
 
-After making changes, build the docs locally:
+Ensure Python dependencies are installed before building:
+
+```bash
+uv sync --group docs
+```
+
+Build the docs:
 
 ```bash
 make docs
 ```
 
-Check for:
+A clean build ends with output like:
 
-- Build warnings or errors.
-- Broken cross-references.
-- Correct rendering of new content.
+```
+build succeeded.
+The HTML pages are in docs/_build/html.
+```
+
+Warnings that indicate real problems and must be fixed:
+
+- `WARNING: document isn't included in any toctree` — the new page is not linked from `docs/index.md`.
+- `WARNING: undefined label` — a cross-reference target does not exist.
+- `WARNING: Title underline too short` — RST formatting error in a MyST file.
+
+Warnings that are safe to ignore:
+
+- `WARNING: more than one target found for cross-reference` on third-party extension pages.
 
 ## Tips
 
